@@ -21,6 +21,8 @@ users exists, how the ratio between free and paid users develops, etc. etc.
     - `artists` table has information about the artists
     - `time` table has additional information about the time when the songs were played.
   
+![DB Schema](schema/results/diagrams/summary/relationships.implied.large.png)
+
 This database design is very useful for analytics as it simplifies analytics queries a lot
 and allows fast aggregations. In the case of Sparkify the relevant entity is the 
 songplay, which is stored in the songplays table. Aggregations (e.g. how many songs were played
@@ -55,14 +57,9 @@ For some reason there is also one duplicate in the song_date (artist Clp with id
 #### Missing features
 
 - Foreign key relationships between the primary keys of dimensional tables and the 
-  columns in the fact table are missing. However, enforcing this relationship would
-  make the ETL process harder as the data would have to be loaded into the DB in the 
-  correct order and it would have to be complete (which is not the case for this dataset as
-  song_data is missing for most of the played songs).
-  
-  Enforcing foreign key relationship in an analytics database does not have the same high
-  priority as in an OLTP database used for production. However, at least test queries
-  would have to be written to check for violations in the relationships.
+  columns in the fact table are missing in some cases (songs and artists tables) as entries in
+  these tables are missing for many songplays. 
+
 - Indices on the id-columns in the fact table for faster querying.
   
 

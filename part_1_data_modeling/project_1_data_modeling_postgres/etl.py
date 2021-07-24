@@ -1,5 +1,6 @@
 import os
 import glob
+from typing import Callable
 
 import psycopg2
 import pandas as pd
@@ -16,7 +17,15 @@ from sql_queries import (
 )
 
 
-def process_song_file(cur, filepath):
+def process_song_file(cur, filepath: str) -> None:
+    """Processes a single song file.
+
+    Loads the the data from one song file into a pandas dataframe. Extracts of song and artist information and saves
+    it to the `songs` dimension table.
+    Args:
+        cur: DB cursor
+        filepath: path to one song file
+    """
     # open song file
     df = pd.read_json(filepath, lines=True)
 
@@ -29,7 +38,22 @@ def process_song_file(cur, filepath):
     cur.execute(artist_table_insert, artist_data)
 
 
-def process_log_file(cur, filepath):
+def process_log_file(cur, filepath: str):
+    """Processes a single log file.
+
+    1. Loads the the data from one log file (consisting of multiple entries) into a pandas dataframe.
+    2. Extracts the timestamp column, calculates metadata for each timestamp and saves the timestamp
+    data  to the `time` dimension table.
+    3. Extracts of users information from the log_data and saves it the `users` dimension table.
+    4. For each song:
+    - Queries database for artist_id and song_id of the played song.
+    - Extracts the songplay information and combines it with the artist_id and song_id (`None` if nothing was found)
+    - Saves songplay information to database.
+
+    Args:
+        cur: DB cursor
+        filepath: path to one song file
+    """
     # open log file
     df = pd.read_json(filepath, lines=True)
 
@@ -90,12 +114,24 @@ def process_log_file(cur, filepath):
         cur.execute(songplay_table_insert, songplay_data)
 
 
-def process_data(cur, conn, filepath, func):
+def process_data(cur, conn, filepath: str, func: Callable) -> None:
+    """Processes all data files.
+
+    Generates a list of all json-files by walking the base filepath recursively and
+    searching for json-files. Then iterates over the file list and passing each file
+    to the provided python callable. Commits after the processing of each file.
+
+    Args:
+        cur: DB Cursor
+        conn: DB Connection
+        filepath: basepath to the json files
+        func: callable which is used to process one raw json data file
+    """
     # get all files matching extension from directory
     all_files = []
     for root, dirs, files in os.walk(filepath):
         files = glob.glob(os.path.join(root,'*.json'))
-        for f in files :
+        for f in files:
             all_files.append(os.path.abspath(f))
 
     # get total number of files found
@@ -110,6 +146,9 @@ def process_data(cur, conn, filepath, func):
 
 
 def main():
+    """Main etl function.
+
+    Creates DB connection and process first the songfile data and then log file data."""
     conn = psycopg2.connect("host=127.0.0.1 dbname=sparkifydb user=student password=student")
     cur = conn.cursor()
 

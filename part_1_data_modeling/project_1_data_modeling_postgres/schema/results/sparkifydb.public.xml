@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<database name="sparkifydb" schema="public" type="PostgreSQL - 13.3 (Debian 13.3-1.pgdg100+1)">
+   <sequences>
+      <sequence increment="1" name="songplays_songplay_id_seq" startValue="1"/>
+   </sequences>
+   <tables>
+      <table name="artists" numRows="69" remarks="" schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="artist_id" nullable="false" remarks="" size="2147483647" type="varchar" typeCode="12">
+            <child column="artist_id" foreignKey="Implied Constraint" implied="true" onDeleteCascade="false" schema="public" table="songplays"/>
+            <child column="artist_id" foreignKey="Implied Constraint" implied="true" onDeleteCascade="false" schema="public" table="songs"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="name" nullable="false" remarks="" size="2147483647" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="location" nullable="true" remarks="" size="2147483647" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="17" id="3" name="latitude" nullable="true" remarks="" size="17" type="float8" typeCode="8"/>
+         <column autoUpdated="false" defaultValue="null" digits="17" id="4" name="longitude" nullable="true" remarks="" size="17" type="float8" typeCode="8"/>
+         <primaryKey column="artist_id" sequenceNumberInPK="1"/>
+         <index name="artists_pkey" unique="true">
+            <column ascending="true" name="artist_id"/>
+         </index>
+      </table>
+      <table name="songplays" numRows="6820" remarks="" schema="public" type="TABLE">
+         <column autoUpdated="true" defaultValue="nextval('songplays_songplay_id_seq'::regclass)" digits="0" id="0" name="songplay_id" nullable="false" remarks="" size="10" type="serial" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="6" id="1" name="start_time" nullable="false" remarks="" size="29" type="timestamp" typeCode="93">
+            <parent column="start_time" foreignKey="songplays_start_time_fkey" implied="false" onDeleteCascade="false" schema="public" table="time"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="user_id" nullable="false" remarks="" size="10" type="int4" typeCode="4">
+            <parent column="user_id" foreignKey="songplays_user_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="users"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="level" nullable="false" remarks="" size="2147483647" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="song_id" nullable="true" remarks="" size="2147483647" type="varchar" typeCode="12">
+            <parent column="song_id" foreignKey="Implied Constraint" implied="true" onDeleteCascade="false" schema="public" table="songs"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="artist_id" nullable="true" remarks="" size="2147483647" type="varchar" typeCode="12">
+            <parent column="artist_id" foreignKey="Implied Constraint" implied="true" onDeleteCascade="false" schema="public" table="artists"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="6" name="session_id" nullable="false" remarks="" size="2147483647" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="7" name="location" nullable="true" remarks="" size="2147483647" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="8" name="user_agent" nullable="true" remarks="" size="2147483647" type="varchar" typeCode="12"/>
+         <primaryKey column="songplay_id" sequenceNumberInPK="1"/>
+         <index name="songplays_pkey" unique="true">
+            <column ascending="true" name="songplay_id"/>
+         </index>
+      </table>
+      <table name="songs" numRows="71" remarks="" schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="song_id" nullable="false" remarks="" size="2147483647" type="varchar" typeCode="12">
+            <child column="song_id" foreignKey="Implied Constraint" implied="true" onDeleteCascade="false" schema="public" table="songplays"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="title" nullable="false" remarks="" size="2147483647" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="artist_id" nullable="false" remarks="" size="2147483647" type="varchar" typeCode="12">
+            <parent column="artist_id" foreignKey="Implied Constraint" implied="true" onDeleteCascade="false" schema="public" table="artists"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="year" nullable="false" remarks="" size="10" type="int4" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="duration" nullable="false" remarks="" size="0" type="numeric" typeCode="2"/>
+         <primaryKey column="song_id" sequenceNumberInPK="1"/>
+         <index name="songs_pkey" unique="true">
+            <column ascending="true" name="song_id"/>
+         </index>
+      </table>
+      <table name="time" numRows="6813" remarks="" schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="6" id="0" name="start_time" nullable="false" remarks="" size="29" type="timestamp" typeCode="93">
+            <child column="start_time" foreignKey="songplays_start_time_fkey" implied="false" onDeleteCascade="false" schema="public" table="songplays"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="hour" nullable="false" remarks="" size="10" type="int4" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="day" nullable="false" remarks="" size="10" type="int4" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="week" nullable="false" remarks="" size="10" type="int4" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="month" nullable="false" remarks="" size="10" type="int4" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="year" nullable="false" remarks="" size="10" type="int4" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="6" name="weekday" nullable="false" remarks="" size="10" type="int4" typeCode="4"/>
+         <primaryKey column="start_time" sequenceNumberInPK="1"/>
+         <index name="time_pkey" unique="true">
+            <column ascending="true" name="start_time"/>
+         </index>
+      </table>
+      <table name="users" numRows="96" remarks="" schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="user_id" nullable="false" remarks="" size="10" type="int4" typeCode="4">
+            <child column="user_id" foreignKey="songplays_user_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="songplays"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="first_name" nullable="false" remarks="" size="2147483647" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="last_name" nullable="false" remarks="" size="2147483647" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="gender" nullable="false" remarks="" size="2147483647" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="level" nullable="false" remarks="" size="2147483647" type="varchar" typeCode="12"/>
+         <primaryKey column="user_id" sequenceNumberInPK="1"/>
+         <index name="users_pkey" unique="true">
+            <column ascending="true" name="user_id"/>
+         </index>
+      </table>
+   </tables>
+</database>
