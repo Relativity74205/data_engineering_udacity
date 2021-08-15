@@ -4,12 +4,16 @@ from sql_queries import create_table_queries, drop_table_queries
 
 
 def drop_tables(cur, conn):
+    """Drops all tables (staging and final star schema tables)."""
     for query in drop_table_queries:
         cur.execute(query)
         conn.commit()
 
 
 def create_tables(cur, conn):
+    """Creates all tables (staging and final star schema tables).
+
+    See the queries in the `create_table_queries` list for details."""
     for query in create_table_queries:
         cur.execute(query)
         conn.commit()
