@@ -9,6 +9,42 @@ and preferences.
 For example, for the startup it is important to know which songs/artists are played a lot, how many paid 
 users exists, how the ratio between free and paid users develops, etc. etc.
 
+## Usage of scripts
+
+To run the python scripts the `psycopg2` package has to be installed in the used python environment.
+
+Run the `create_tables.py` script, to create all tables:
+```shell
+python create_tables.py
+```
+Run the `etl.py` script, to load the data from S3 and to run the etl process in Redshift:
+```shell
+python etl.py
+```
+
+Prerequisite for both scripts is the config file `dwh.cfg`, which must be present in the same directory as
+the python files. The config file must have the below form, however, the values in the `cluster` and `iam_role`
+section have to be adjusted.
+
+The `iam_role` is assigned to the redshift cluster for copying of the data from S3 to redshift. It must have
+the `arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess` policy.
+```
+[CLUSTER]
+HOST='redshift-cluster-1.cmhhchzmlyns.us-east-1.redshift.amazonaws.com'
+DB_NAME='dev'
+DB_USER='awsuser'
+DB_PASSWORD='password'
+DB_PORT=5439
+
+[IAM_ROLE]
+ARN=arn:aws:iam::598463720578:role/myRedshiftRole
+
+[S3]
+LOG_DATA='s3://udacity-dend/log_data'
+LOG_JSONPATH='s3://udacity-dend/log_json_path.json'
+SONG_DATA='s3://udacity-dend/song_data'
+```
+
 ## Database schema design and etl process
 
 #### The database is set up in a star schema:

@@ -59,7 +59,7 @@ DISTSTYLE KEY
 # as the songplay table is a fact table, diststyle even was chosen
 songplay_table_create = """
 CREATE TABLE songplays (
-songplay_id INT IDENTITY(0,1) NOT NULL, 
+songplay_id INT IDENTITY(0,1) NOT NULL PRIMARY KEY, 
 start_time TIMESTAMP NOT NULL SORTKEY,
 user_id INT NOT NULL,
 level VARCHAR (8) NOT NULL,
@@ -75,7 +75,7 @@ DISTSTYLE EVEN;
 # as the users table is a dimension table, diststyle all was chosen
 user_table_create = """
 CREATE TABLE users (
-user_id INT NOT NULL,
+user_id INT NOT NULL PRIMARY KEY,
 first_name VARCHAR (128) NOT NULL,
 last_name VARCHAR (128) NOT NULL,
 gender VARCHAR (1) NOT NULL,
@@ -87,7 +87,7 @@ DISTSTYLE ALL;
 # as the songs table is a dimension table, diststyle all was chosen
 song_table_create = """
 CREATE TABLE songs (
-song_id VARCHAR (18) NOT NULL,
+song_id VARCHAR (18) NOT NULL PRIMARY KEY,
 title VARCHAR (512) NOT NULL,
 artist_id VARCHAR (18) NOT NULL,
 year INT NOT NULL,
@@ -99,7 +99,7 @@ DISTSTYLE ALL;
 # as the artists table is a dimension table, diststyle all was chosen
 artist_table_create = """
 CREATE TABLE artists (
-artist_id VARCHAR (18) NOT NULL,
+artist_id VARCHAR (18) NOT NULL PRIMARY KEY,
 name VARCHAR (256) NOT NULL,
 location VARCHAR (256),
 latitude FLOAT,
@@ -111,7 +111,7 @@ DISTSTYLE ALL;
 # as the time table is a dimension table, diststyle all was chosen
 time_table_create = """
 CREATE TABLE time (
-start_time TIMESTAMP,
+start_time TIMESTAMP PRIMARY KEY,
 hour INT NOT NULL,
 day INT NOT NULL,
 week INT NOT NULL,
@@ -225,6 +225,7 @@ INSERT INTO time (
     FROM staging_events se
     LEFT JOIN time t ON se.ts = t.start_time
     WHERE t.start_time IS NULL
+    AND se.page = 'NextSong'
 );
 """
 
