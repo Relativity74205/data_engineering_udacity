@@ -1,0 +1,20 @@
+version: "3.7"
+services:
+    jupyter-spark:
+        image: jupyter/pyspark-notebook:latest
+        networks:
+            - default_net
+        ports:
+          - "8888:8888"
+          - "4040-4080:4040-4080"
+        environment:
+          - JUPYTER_ENABLE_LAB=yes
+          - AWS_ACCESS_KEY_ID=AKIAYNIWNYJNLYTLAPGG
+          - AWS_SECRET_ACCESS_KEY=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
+          # - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
+        volumes:
+          - ./notebooks:/home/jovyan/work/notebooks/
+          - ./data:/home/jovyan/work/data/
+networks:
+    default_net:
+      attachable: true

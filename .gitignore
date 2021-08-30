@@ -3,3 +3,4 @@ poetry.lock
 .ipynb_checkpoints
 data
 __pycache__
+/part_3_spark/.awscredentials
