@@ -9,8 +9,8 @@ services:
           - "4040-4080:4040-4080"
         environment:
           - JUPYTER_ENABLE_LAB=yes
-          - AWS_ACCESS_KEY_ID=AKIAYNIWNYJNLYTLAPGG
-          - AWS_SECRET_ACCESS_KEY=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
+          - AWS_ACCESS_KEY_ID=
+          - AWS_SECRET_ACCESS_KEY=
           # - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
         volumes:
           - ./notebooks:/home/jovyan/work/notebooks/
