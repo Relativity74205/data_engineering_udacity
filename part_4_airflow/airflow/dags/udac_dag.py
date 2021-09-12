@@ -23,32 +23,32 @@ dag = DAG(
     schedule_interval='0 * * * *',
 )
 
-start_operator = DummyOperator(task_id='Begin_execution',  dag=dag)
+begin_execution = DummyOperator(task_id='begin_execution',  dag=dag)
 
-stage_events_to_redshift = StageToRedshiftOperator(
-    task_id='Stage_events',
+stage_events = StageToRedshiftOperator(
+    task_id='stage_events',
     dag=dag,
-    table='public.staging_events',
     redshift_conn_id='redshift_conn_id',
+    table='public.staging_events',
     s3_bucket='udacity-dend',
     s3_key='log_data/2018/11/2018-11-0',
     region='us-west-2',
-    iam_role='arn:aws:iam::598463720578:role/myRedshiftRole'
+    iam_role='arn:aws:iam::598463720578:role/myRedshiftRole',
 )
 
-stage_songs_to_redshift = StageToRedshiftOperator(
-    task_id='Stage_songs',
+stage_songs = StageToRedshiftOperator(
+    task_id='stage_songs',
     dag=dag,
     table='public.staging_songs',
     redshift_conn_id='redshift_conn_id',
     s3_bucket='udacity-dend',
     s3_key='song_data/A/A',
     region='us-west-2',
-    iam_role='arn:aws:iam::598463720578:role/myRedshiftRole'
+    iam_role='arn:aws:iam::598463720578:role/myRedshiftRole',
 )
 
 load_songplays_table = LoadFactOperator(
-    task_id='Load_songplays_fact_table',
+    task_id='load_songplays_table',
     dag=dag,
     redshift_conn_id='redshift_conn_id',
     table='public.songplays',
@@ -56,44 +56,57 @@ load_songplays_table = LoadFactOperator(
 )
 
 load_user_dimension_table = LoadDimensionOperator(
-    task_id='Load_user_dim_table',
+    task_id='load_user_dimension_table',
     dag=dag,
     redshift_conn_id='redshift_conn_id',
+    truncate_table=True,
     table='public.users',
     insert_query=SqlQueries.user_table_insert,
 )
 
 load_song_dimension_table = LoadDimensionOperator(
-    task_id='Load_song_dim_table',
+    task_id='load_song_dimension_table',
     dag=dag,
     redshift_conn_id='redshift_conn_id',
+    truncate_table=True,
     table='public.songs',
     insert_query=SqlQueries.song_table_insert,
 )
 
 load_artist_dimension_table = LoadDimensionOperator(
-    task_id='Load_artist_dim_table',
+    task_id='load_artist_dimension_table',
     dag=dag,
     redshift_conn_id='redshift_conn_id',
+    truncate_table=True,
     table='public.artists',
     insert_query=SqlQueries.artist_table_insert,
 )
 
 load_time_dimension_table = LoadDimensionOperator(
-    task_id='Load_time_dim_table',
+    task_id='load_time_dimension_table',
     dag=dag,
     redshift_conn_id='redshift_conn_id',
+    truncate_table=True,
     table='public.time',
     insert_query=SqlQueries.time_table_insert,
 )
 
 run_quality_checks = DataQualityOperator(
-    task_id='Run_data_quality_checks',
-    dag=dag
+    task_id='run_quality_checks',
+    dag=dag,
+    redshift_conn_id='redshift_conn_id',
+    test_queries=[
+        "SELECT CASE WHEN COUNT(*) = 0 THEN 'empty' else 'nonempty' END FROM public.songs",
+        'SELECT COUNT(*) FROM public.songs WHERE songid IS NULL',
+    ],
+    results=[
+        'nonempty',
+        0
+    ]
 )
 
-end_operator = DummyOperator(task_id='Stop_execution',  dag=dag)
+stop_execution = DummyOperator(task_id='stop_execution',  dag=dag)
 
-start_operator >> (stage_events_to_redshift, stage_songs_to_redshift) >> load_songplays_table
+begin_execution >> (stage_events, stage_songs) >> load_songplays_table
 load_songplays_table >> (load_song_dimension_table, load_user_dimension_table, load_artist_dimension_table, load_time_dimension_table) >> run_quality_checks
-run_quality_checks >> end_operator
+run_quality_checks >> stop_execution

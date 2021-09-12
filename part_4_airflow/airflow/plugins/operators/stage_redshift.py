@@ -1,11 +1,9 @@
-from airflow.contrib.hooks.aws_hook import AwsHook
 from airflow.hooks.postgres_hook import PostgresHook
 from airflow.models import BaseOperator
 from airflow.utils.decorators import apply_defaults
 
 
 class StageToRedshiftOperator(BaseOperator):
-    template_fields = ("s3_key",)
     copy_sql = """
         COPY {}
         FROM 's3://{}/{}'
@@ -13,8 +11,7 @@ class StageToRedshiftOperator(BaseOperator):
         REGION '{}'
         JSON 'auto'
     """
-    # ACCESS_KEY_ID ':aws_access_key_id'
-    # SECRET_ACCESS_KEY ':aws_secret_access_key'
+    truncate_sql = "TRUNCATE TABLE {}"
 
     ui_color = '#358140'
 
@@ -39,10 +36,11 @@ class StageToRedshiftOperator(BaseOperator):
     def execute(self, context):
         redshift = PostgresHook(postgres_conn_id=self.redshift_conn_id)
 
-        redshift.run(f"TRUNCATE TABLE {self.table}")
+        truncate_sql = StageToRedshiftOperator.truncate_sql.format(self.table)
+        redshift.run(truncate_sql)
         self.log.info(f"{self.table} truncated.")
 
-        formatted_sql = StageToRedshiftOperator.copy_sql.format(
+        copy_sql = StageToRedshiftOperator.copy_sql.format(
             self.table,
             self.s3_bucket,
             self.s3_key,
@@ -50,4 +48,4 @@ class StageToRedshiftOperator(BaseOperator):
             self.region
         )
 
-        redshift.run(formatted_sql)
+        redshift.run(copy_sql)

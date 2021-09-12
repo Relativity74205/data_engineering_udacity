@@ -4,6 +4,7 @@ from airflow.utils.decorators import apply_defaults
 
 
 class LoadFactOperator(BaseOperator):
+    insert_sql = "INSERT INTO {} {}"
 
     ui_color = '#F98866'
 
@@ -22,5 +23,6 @@ class LoadFactOperator(BaseOperator):
     def execute(self, context):
         redshift = PostgresHook(postgres_conn_id=self.redshift_conn_id)
 
-        redshift.run(f"INSERT INTO {self.table} {self.insert_query}")
+        insert_sql = LoadFactOperator.insert_sql.format(self.table, self.insert_query)
+        redshift.run(insert_sql)
         self.log.info(f"{self.table} inserted into.")
