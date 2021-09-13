@@ -7,11 +7,11 @@ from airflow.utils.decorators import apply_defaults
 class StageToRedshiftOperator(BaseOperator):
     copy_sql = """
         COPY {}
-        FROM 's3://{}/{}'
+        FROM '{}'
         ACCESS_KEY_ID '{}'
         SECRET_ACCESS_KEY '{}'
         REGION '{}'
-        JSON 'auto'
+        JSON '{}'
     """
     truncate_sql = "TRUNCATE TABLE {}"
 
@@ -19,12 +19,13 @@ class StageToRedshiftOperator(BaseOperator):
 
     @apply_defaults
     def __init__(self,
-                 redshift_conn_id="",
-                 aws_credentials_id="",
-                 table="",
-                 s3_bucket="",
-                 s3_key="",
-                 region="",
+                 redshift_conn_id: str,
+                 aws_credentials_id: str,
+                 table: str,
+                 s3_bucket: str,
+                 s3_key: str,
+                 region: str,
+                 json_path: str = None,
                  *args, **kwargs):
 
         super(StageToRedshiftOperator, self).__init__(*args, **kwargs)
@@ -34,6 +35,7 @@ class StageToRedshiftOperator(BaseOperator):
         self.s3_bucket = s3_bucket
         self.s3_key = s3_key
         self.region = region
+        self.json_path = json_path
 
     def execute(self, context):
         aws_hook = AwsHook(self.aws_credentials_id)
@@ -44,13 +46,18 @@ class StageToRedshiftOperator(BaseOperator):
         redshift.run(truncate_sql)
         self.log.info(f"{self.table} truncated.")
 
+        s3_full_path = f's3://{self.s3_bucket}/{self.s3_key}'
+        if self.json_path:
+            s3_json_string = f's3://{self.s3_bucket}/{self.json_path}'
+        else:
+            s3_json_string = 'auto'
         copy_sql = StageToRedshiftOperator.copy_sql.format(
             self.table,
-            self.s3_bucket,
-            self.s3_key,
+            s3_full_path,
             credentials.access_key,
             credentials.secret_key,
-            self.region
+            self.region,
+            s3_json_string
         )
 
         redshift.run(copy_sql)
