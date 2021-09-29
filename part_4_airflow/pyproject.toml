@@ -8,6 +8,7 @@ authors = ["Relativity74205 <arkadius@schuchhardt.com>"]
 python = "^3.7"
 psycopg2 = "^2.9.1"
 boto3 = "^1.18.40"
+pyarrow = "^5.0.0"
 
 [tool.poetry.dev-dependencies]
 

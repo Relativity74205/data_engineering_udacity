@@ -1,0 +1,8 @@
+[postgres]
+host = "127.0.0.1"
+dbname = "studentdb"
+user = "student"
+password = "student"
+
+[filenames]
+immigration_description = "data/I94_SAS_Labels_Descriptions.SAS"
