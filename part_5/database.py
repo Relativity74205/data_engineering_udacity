@@ -1,7 +1,9 @@
 from contextlib import contextmanager
-from typing import List, Tuple, Any
+from typing import Iterable, Tuple, Any
 
+import pandas as pd
 import psycopg2
+import psycopg2.extras
 
 from config import config
 from queries import create_table, drop_table
@@ -43,10 +45,18 @@ def reset_database():
     create_tables()
 
 
-def insert_data(insert_query: str, data_list: List[Tuple[Any, ...]]):
+def insert_data(insert_query: str, data_list: Iterable[Tuple[Any, ...]]):
     """Inserts a list of tuples into the database with the help of the given insert into query."""
     with get_db_cursor() as cur:
         for data_tuple in data_list:
             cur.execute(insert_query, data_tuple)
 
 
+def bulk_insert_data(insert_query: str, df: pd.DataFrame, page_size: int = 10_000):
+    """Bulk inserts a dataframe into the database with the help of the given insert into query.
+
+    See the documentation of the psycopg2 package for details."""
+    data = df.itertuples(index=False, name=None)
+
+    with get_db_cursor() as cur:
+        psycopg2.extras.execute_values(cur, insert_query, data, template=None, page_size=page_size)

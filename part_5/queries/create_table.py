@@ -4,9 +4,9 @@ immigration_id SERIAL PRIMARY KEY,
 i94yr INT NOT NULL,
 i94mon INT NOT NULL,
 i94res INT NOT NULL REFERENCES i94_regions(region_id),
-i94port VARCHAR(3) NOT NULL REFERENCES i94_cities(city_name_short),
+i94port VARCHAR(3) NOT NULL REFERENCES i94_ports(port_code),
 i94mode INT NOT NULL REFERENCES i94_travel_modes(travel_mode_id),
-i94addr VARCHAR(8) REFERENCES i94_states(state_name_short),
+i94addr VARCHAR(8) REFERENCES i94_states(state_code),
 arrdate DATE NOT NULL,
 depdate DATE,
 i94bir INT NOT NULL,
@@ -23,11 +23,11 @@ region_name VARCHAR(256) NOT NULL
 );
 """)
 
-i94_cities = ("""
-CREATE TABLE IF NOT EXISTS i94_cities (
-city_name_short VARCHAR(3) PRIMARY KEY,
-city_name VARCHAR(128) NOT NULL,
-us_state_name_short VARCHAR(2) REFERENCES i94_states(state_name_short),
+i94_ports = ("""
+CREATE TABLE IF NOT EXISTS i94_ports (
+port_code VARCHAR(3) PRIMARY KEY,
+port VARCHAR(128) NOT NULL,
+state_code VARCHAR(2) REFERENCES i94_states(state_code),
 country VARCHAR(64)
 );
 """)
@@ -41,8 +41,16 @@ traval_mode VARCHAR(16) NOT NULL
 
 i94_states = ("""
 CREATE TABLE IF NOT EXISTS i94_states (
-state_name_short VARCHAR(2) PRIMARY KEY,
-state_name VARCHAR(32) NOT NULL
+state_code VARCHAR(2) PRIMARY KEY,
+state VARCHAR(32) NOT NULL,
+white INT,
+black INT,
+hispanic INT,
+asian INT,
+american_indian_alaska_native INT,
+native_hawaiian_other_pacific_islander INT,
+multiple_races INT,
+total INT
 );
 """)
 
@@ -54,4 +62,33 @@ visa_name VARCHAR(16) NOT NULL
 """)
 
 
-ddl_queries = (i94_regions, i94_states, i94_cities, i94_travel_modes, i94_visa, immigration)
+demographics = ("""
+CREATE TABLE IF NOT EXISTS demographics (
+city VARCHAR(64) NOT NULL,
+state_code VARCHAR(2) NOT NULL,
+total_population INT NOT NULL,
+foreign_born INT,
+american_indian_and_alaska_native NUMERIC NOT NULL,
+asian NUMERIC NOT NULL,
+black_or_african_american NUMERIC NOT NULL,
+hispanic_or_latino NUMERIC NOT NULL,
+white NUMERIC NOT NULL,
+PRIMARY KEY(city, state_code)
+);
+""")
+
+temperatures = ("""
+CREATE TABLE IF NOT EXISTS temperatures(
+city VARCHAR(64) NOT NULL,
+country VARCHAR(64) NOT NULL,
+latitude varchar(8) NOT NULL,
+longitude varchar(8) NOT NULL,
+calendar_month INT NOT NULL,
+mean_temperature NUMERIC NOT NULL,
+PRIMARY KEY(city, country, latitude, longitude, calendar_month)
+); 
+""")
+
+ddl_queries = (i94_regions, i94_states, i94_ports, i94_travel_modes, i94_visa, immigration, demographics, temperatures)
+
+

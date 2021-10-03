@@ -12,8 +12,8 @@ VALUES (%s, %s)
 """)
 
 i94_ports = ("""
-INSERT INTO i94_cities 
-(city_name_short, city_name, us_state_name_short, country)
+INSERT INTO i94_ports 
+(port_code, port, state_code, country)
 VALUES (%s, %s, %s, %s)
 """)
 
@@ -25,12 +25,24 @@ VALUES (%s, %s)
 
 i94_states = ("""
 INSERT INTO i94_states 
-(state_name_short, state_name)
-VALUES (%s, %s)
+(state_code, state, white, black, hispanic, asian, american_indian_alaska_native, native_hawaiian_other_pacific_islander, multiple_races, total)
+VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
 """)
 
 i94_visa = ("""
 INSERT INTO i94_visa 
 (visa_id, visa_name)
 VALUES (%s, %s)
+""")
+
+temperatures = ("""
+INSERT INTO temperatures 
+(city, country, latitude, longitude, calendar_month, mean_temperature)
+VALUES %s
+""")
+
+demographics = ("""
+INSERT INTO demographics 
+(city, state_code, total_population, foreign_born, american_indian_and_alaska_native, asian, black_or_african_american, hispanic_or_latino, white)
+VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
 """)
