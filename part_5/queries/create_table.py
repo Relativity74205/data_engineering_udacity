@@ -26,7 +26,7 @@ region_name VARCHAR(256) NOT NULL
 i94_ports = ("""
 CREATE TABLE IF NOT EXISTS i94_ports (
 port_code VARCHAR(3) PRIMARY KEY,
-city VARCHAR(64) NOT NULL,
+port VARCHAR(64) NOT NULL,
 state_code VARCHAR(2) REFERENCES i94_states(state_code),
 country VARCHAR(64)
 );

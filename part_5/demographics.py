@@ -48,7 +48,7 @@ def load_demographics() -> pd.DataFrame:
 
 
 def demographics_etl():
-    df_demographics = load_demographics()
-    df_demographics_clean = clean_demographics(df_demographics)
-    data = prepare_demographics_for_load(df_demographics_clean)
-    database.insert_data(insert_into.demographics, data)
+    demographics_raw = load_demographics()
+    demographics_clean = clean_demographics(demographics_raw)
+    demographics_final = prepare_demographics_for_load(demographics_clean)
+    database.insert_data(insert_into.demographics, demographics_final)

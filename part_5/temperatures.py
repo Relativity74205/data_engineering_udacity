@@ -43,7 +43,7 @@ def load_temperatures() -> pd.DataFrame:
 
 
 def temperatures_etl():
-    temperatures = load_temperatures()
-    temperatures_clean = clean_temperatures(temperatures)
+    temperatures_raw = load_temperatures()
+    temperatures_clean = clean_temperatures(temperatures_raw)
     temperatures_agg = aggregate_temperatures(temperatures_clean)
     database.bulk_insert_data(insert_into.temperatures, temperatures_agg)
