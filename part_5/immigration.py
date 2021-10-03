@@ -183,7 +183,8 @@ def clean_ports(ports_raw: List[Tuple[str, str]]) -> List[Tuple[str, str]]:
 
 
 def load_immigration() -> pd.DataFrame:
-    return pd.read_sas(config["filenames"]["immigration_description"], encoding="ISO-8859-1")
+    # return pd.read_sas(config["filenames"]["immigration"], encoding="ISO-8859-1")
+    return pd.read_parquet(config["filenames"]["immigration_parquet"])
 
 
 def immigration_etl():

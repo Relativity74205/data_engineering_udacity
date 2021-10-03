@@ -6,7 +6,8 @@ password = "student"
 
 [filenames]
 immigration_description = "data/I94_SAS_Labels_Descriptions.SAS"
-immigration = "data/immigration_full/i94_apr16_sub.parquet"
+immigration_parquet = "data/immigration_full/i94_apr16_sub.parquet"
+immigration = "data/immigration_full/18-83510-I94-Data-2016/i94_apr16_sub.sas7bdat"
 temperatures = "data/GlobalLandTemperaturesByCity.csv"
 demographics = "data/us-cities-demographics.csv"
 state_demographics = "data/us_demographics_by_state.csv"

@@ -11,7 +11,7 @@ arrdate DATE NOT NULL,
 depdate DATE,
 i94bir INT NOT NULL,
 i94visa INT NOT NULL REFERENCES i94_visa(visa_id),
-gender VARCHAR(1),
+gender VARCHAR(8),
 airline VARCHAR(128)
 );
 """)
@@ -26,7 +26,7 @@ region_name VARCHAR(256) NOT NULL
 i94_ports = ("""
 CREATE TABLE IF NOT EXISTS i94_ports (
 port_code VARCHAR(3) PRIMARY KEY,
-port VARCHAR(128) NOT NULL,
+city VARCHAR(64) NOT NULL,
 state_code VARCHAR(2) REFERENCES i94_states(state_code),
 country VARCHAR(64)
 );
@@ -61,19 +61,18 @@ visa_name VARCHAR(16) NOT NULL
 );
 """)
 
-
 demographics = ("""
 CREATE TABLE IF NOT EXISTS demographics (
 city VARCHAR(64) NOT NULL,
 state_code VARCHAR(2) NOT NULL,
 total_population INT NOT NULL,
 foreign_born INT,
-american_indian_and_alaska_native NUMERIC NOT NULL,
-asian NUMERIC NOT NULL,
-black_or_african_american NUMERIC NOT NULL,
-hispanic_or_latino NUMERIC NOT NULL,
-white NUMERIC NOT NULL,
-PRIMARY KEY(city, state_code)
+american_indian_and_alaska_native INT NOT NULL,
+asian INT NOT NULL,
+black_or_african_american INT NOT NULL,
+hispanic_or_latino INT NOT NULL,
+white INT NOT NULL,
+PRIMARY KEY(city, state_code) 
 );
 """)
 
@@ -89,6 +88,4 @@ PRIMARY KEY(city, country, latitude, longitude, calendar_month)
 ); 
 """)
 
-ddl_queries = (i94_regions, i94_states, i94_ports, i94_travel_modes, i94_visa, immigration, demographics, temperatures)
-
-
+ddl_queries = (demographics, temperatures, i94_regions, i94_states, i94_ports, i94_travel_modes, i94_visa, immigration, )
