@@ -60,3 +60,12 @@ def bulk_insert_data(insert_query: str, df: pd.DataFrame, page_size: int = 10_00
 
     with get_db_cursor() as cur:
         psycopg2.extras.execute_values(cur, insert_query, data, template=None, page_size=page_size)
+
+
+def run_query(query: str) -> pd.DataFrame:
+    with get_db_cursor() as cur:
+        cur.execute(query)
+        data = cur.fetchall()
+        columns = [desc[0] for desc in cur.description]
+
+    return pd.DataFrame(data, columns=columns)
